@@ -5,44 +5,51 @@ import { ReactNode } from 'react';
 interface CTAButtonProps {
   children: ReactNode;
   variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'default' | 'lg' | 'xl';
+  size?: 'default' | 'lg' | 'sm' | 'xl';
   className?: string;
   onClick?: () => void;
+  href?: string;
 }
 
-export const CTAButton = ({ 
-  children, 
-  variant = 'primary', 
+export const CTAButton = ({
+  children,
+  variant = 'primary',
   size = 'default',
   className = '',
-  onClick 
+  onClick,
+  href
 }: CTAButtonProps) => {
   const baseStyles = "relative inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-300 overflow-hidden";
-  
+
   const variants = {
     primary: "bg-gradient-primary text-primary-foreground shadow-button hover:shadow-glow",
     secondary: "bg-secondary text-secondary-foreground border border-border hover:border-primary/50",
     ghost: "bg-transparent text-foreground hover:bg-secondary",
   };
-  
+
   const sizes = {
+    sm: "px-4 py-2 text-xs",
     default: "px-6 py-3 text-sm",
     lg: "px-8 py-4 text-base",
     xl: "px-10 py-5 text-lg",
   };
 
+  const Component = href ? motion.a : motion.button;
+  const commonProps = {
+    whileHover: { scale: 1.02 },
+    whileTap: { scale: 0.98 },
+    onClick: onClick,
+    className: `${baseStyles} ${variants[variant]} ${sizes[size as keyof typeof sizes]} ${className}`,
+    ...(href ? { href } : {})
+  };
+
   return (
-    <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      onClick={onClick}
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
-    >
+    <Component {...(commonProps as any)}>
       <span className="relative z-10 flex items-center gap-2">
         {children}
         {variant === 'primary' && <ArrowRight className="w-4 h-4" />}
       </span>
-      
+
       {variant === 'primary' && (
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
@@ -51,6 +58,6 @@ export const CTAButton = ({
           transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
         />
       )}
-    </motion.button>
+    </Component>
   );
 };

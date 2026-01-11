@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
-import { 
-  Zap, Shield, Star, CheckCircle, Users, ChevronDown, 
-  CreditCard, Lock, Clock
+import {
+  Zap, Shield, Star, CheckCircle, Users, ChevronDown,
+  CreditCard, Lock, Clock, DollarSign, Bot, Target,
+  BarChart3, MessageSquare, Wrench, ShieldCheck, GraduationCap,
+  Settings, Rocket, X
 } from 'lucide-react';
 import { CountdownTimer } from '@/components/CountdownTimer';
 import { FeatureCard } from '@/components/FeatureCard';
@@ -15,6 +17,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { useState, useEffect, useMemo } from 'react';
+import { WhatsAppButton } from '@/components/WhatsAppButton';
 
 const testimonials = [
   { content: "Recuperei R$ 8.450 em vendas perdidas no primeiro mês. O InFlow pagou por si mesmo em 3 dias.", author: "João Silva", role: "Infoprodutor" },
@@ -23,84 +27,135 @@ const testimonials = [
   { content: "Instalei em 2 horas e já comecei a ver resultados. Muito mais simples do que imaginei.", author: "Ana Oliveira", role: "Infoprodutora" },
   { content: "Finalmente um sistema que não cobra mensalidade absurda. Paguei uma vez e pronto.", author: "Lucas Ferreira", role: "Afiliado" },
   { content: "O suporte é incrível. Sempre que tive dúvida, recebi resposta rápida.", author: "Carla Mendes", role: "Coach" },
-  { content: "Centralizar Hotmart, Kiwify e Braip num lugar só foi game changer pro meu negócio.", author: "Ricardo Lima", role: "Produtor Digital" },
+  { content: "Centralizar todas as plataformas num lugar só foi game changer pro meu negócio.", author: "Ricardo Lima", role: "Produtor Digital" },
   { content: "A automação de comentários do Instagram triplicou minhas conversões.", author: "Juliana Rocha", role: "Social Media" },
   { content: "Recuperei o valor investido em menos de uma semana. ROI absurdo.", author: "Fernando Alves", role: "Empresário Digital" },
   { content: "Melhor investimento que fiz pro meu negócio digital esse ano.", author: "Patricia Nunes", role: "Infoprodutora" },
 ];
 
 const features = [
-  { icon: "💰", title: "Recuperação Automática de Vendas", description: "Mensagens personalizadas para carrinho abandonado, pagamento recusado, boleto vencido. Recupere até 40% das vendas perdidas.", badge: "Dinheiro no Bolso" },
-  { icon: "🤖", title: "Agente de IA que Vende", description: "Responde Instagram e WhatsApp instantaneamente, tira dúvidas, vende produtos e faz follow-up 24/7.", badge: "Essencial", badgeVariant: "accent" as const },
-  { icon: "🎯", title: "Experiência VIP", description: "Boas-vindas personalizadas, acesso ao grupo exclusivo, offboarding inteligente. Cada cliente se sente único.", badge: "Alta Conversão" },
-  { icon: "📊", title: "Controle Total do Negócio", description: "Todas as vendas de Hotmart, Kiwify, Braip, Ticto em um único painel. Métricas que realmente importam.", badge: "Painel Unificado" },
-  { icon: "💬", title: "Automação de Comentários", description: "Palavra-chave nos comentários ativa resposta automática e envia DM personalizada.", badge: "Pronto para vender" },
-  { icon: "🔧", title: "Painel Web de Controle", description: "Configure tudo pelo navegador, sem precisar mexer em código ou automação.", badge: "Zero Programação" },
+  { icon: <DollarSign className="w-10 h-10 text-primary" />, title: "Recuperação Automática de Vendas", description: "Mensagens personalizadas para carrinho abandonado, pagamento recusado, pix/boleto gerado, compra aprovada, reembolso, assinaturas.", badge: "Dinheiro no Bolso" },
+  { icon: <Bot className="w-10 h-10 text-accent" />, title: "Agente de IA que Vende", description: "Responde Instagram e WhatsApp instantaneamente, tira dúvidas, vende produtos e faz follow-up 24/7.", badge: "Essencial", badgeVariant: "accent" as const },
+  { icon: <Target className="w-10 h-10 text-primary" />, title: "Experiência Personalizada", description: "Mensagens personalizadas para onboarding, reembolso, chargeback visando melhor experiência. Cada cliente se sente único.", badge: "Alta Conversão" },
+  { icon: <BarChart3 className="w-10 h-10 text-primary" />, title: "Controle Total do Negócio", description: "Visualize os principais indicadores de todas as plataformas em um único painel.", badge: "Painel Unificado" },
+  { icon: <MessageSquare className="w-10 h-10 text-primary" />, title: "Automação de Comentários", description: "Palavra-chave nos comentários ativa resposta automática e envia DM personalizada.", badge: "Pronto para vender" },
+  { icon: <Wrench className="w-10 h-10 text-primary" />, title: "Painel Web de Controle", description: "Configure tudo pelo navegador, sem precisar mexer em código ou automação.", badge: "Zero Programação" },
 ];
 
 const bonusFeatures = [
-  { icon: "🛡️", title: "APIs Oficiais e Não-Oficiais", description: "Você escolhe qual usar baseado nas suas necessidades. Flexibilidade total." },
-  { icon: "🎓", title: "Vídeo Aulas Completas", description: "Instalação e configuração VPS, N8N e setup completo dos fluxos." },
-  { icon: "⚙️", title: "Instalação Única", description: "Instala uma vez no seu servidor e funciona para sempre. Sem mensalidades." },
-  { icon: "💬", title: "Suporte Prioritário", description: "Eu não te deixo travar. Tire dúvidas direto comigo e com a equipe na comunidade." },
+  // { icon: <ShieldCheck className="w-10 h-10 text-primary" />, title: "APIs Oficiais e Não-Oficiais", description: "Você escolhe qual usar baseado nas suas necessidades. Flexibilidade total." },
+  { icon: <GraduationCap className="w-10 h-10 text-primary" />, title: "Vídeo Aulas Completas", description: "Instalação e configuração VPS, N8N e setup completo dos fluxos." },
+  { icon: <Settings className="w-10 h-10 text-primary" />, title: "Instalação Única", description: "Instala uma vez no seu servidor e funciona para sempre. Sem mensalidades." },
+  { icon: <MessageSquare className="w-10 h-10 text-primary" />, title: "Suporte Prioritário", description: "Eu não te deixo travar. Tire dúvidas direto comigo e com a equipe na comunidade." },
 ];
 
 const timeline = [
   { day: "DIA 1", title: "Setup do Sistema", description: "Você instala o InFlow no seu servidor próprio. Sem dependência de plataformas gringas." },
-  { day: "DIAS 2–3", title: "Primeira Recuperação Rodando", description: "Suas primeiras mensagens de carrinho abandonado começam a recuperar vendas reais." },
-  { day: "DIAS 4–5", title: "IA + Atendimento 24h", description: "Conexão com ChatGPT/DeepSeek e WhatsApp/Instagram. O sistema começa a trabalhar sozinho." },
-  { day: "DIAS 6–7", title: "Escala Vertical", description: "Você conecta múltiplas plataformas, centraliza dados e começa a escalar com controle total." },
+  { day: "DIA 2", title: "Primeira Recuperação Rodando", description: "Suas primeiras mensagens de carrinho abandonado começam a recuperar vendas reais." },
+  { day: "DIA 3", title: "IA + Atendimento 24h", description: "Conexão com Agente de IA no WhatsApp e Instagram. O sistema começa a trabalhar sozinho." },
+  { day: "DIA 4", title: "Escala Vertical", description: "Você conecta múltiplas plataformas, centraliza dados e começa a escalar com controle total." },
 ];
 
 const pricingItems = [
-  { title: "Sistema Completo de Recuperação", description: "Carrinhos, pagamentos, boletos, assinaturas.", price: "R$ 297" },
-  { title: "Agente de IA para WhatsApp/Instagram", description: "Atendimento 24/7 que vende sozinho.", price: "R$ 397" },
-  { title: "Painel Web de Controle", description: "Configure tudo visualmente, sem código.", price: "R$ 147" },
-  { title: "Centralização de Plataformas", description: "Hotmart, Kiwify, Braip, Ticto unificados.", price: "R$ 197" },
-  { title: "Vídeo Aulas Completas", description: "Setup passo a passo de VPS, N8N e fluxos.", price: "R$ 247" },
+  { title: "Sistema Completo de Recuperação", description: "Carrinho abandonado, pix/boleto gerado, falha de pagamento, assinaturas, onboarding e offboarding.", price: "R$ 497" },
+  { title: "Agente de IA para WhatsApp/Instagram", description: "Atendimento 24/7 que vende sozinho.", price: "R$ 497" },
+  { title: "Painel Web de Controle", description: "Configure tudo visualmente, sem código.", price: "R$ 247" },
+  { title: "Centralização de Plataformas", description: "Kiwify, Lastlink e todas as outras unificadas.", price: "R$ 197" },
+  { title: "Vídeo Aulas Completas", description: "Setup passo a passo de VPS, N8N e fluxos.", price: "R$ 147" },
   { title: "Suporte Prioritário", description: "Comunidade exclusiva para dúvidas.", price: "R$ 97" },
 ];
 
 const faqs = [
-  { q: "Preciso pagar mensalidade?", a: "Não! Você paga uma única vez e os fluxos são seus para sempre. Sem custos recorrentes, sem surpresas." },
+  { q: "Preciso pagar mensalidade?", a: "Do sistema não, você paga uma única vez pelo sistema e os fluxos são seus para sempre. O único custo recorrente é para manter o seu servidor no ar." },
   { q: "Preciso entender de programação ou automação?", a: "Não! Tudo é configurado pelo painel web de forma visual. Você ainda recebe vídeo aulas ensinando passo a passo." },
-  { q: "Funciona com qual plataforma de vendas?", a: "Funciona com Hotmart, Kiwify, Braip, Ticto e outras principais plataformas de infoprodutos do mercado." },
+  { q: "Funciona com qual plataforma de vendas?", a: "Funciona com Kiwify e Lastlink, em alguns dias outras plataformas já serão incluídas. Caso queira solicitar a inclusão de uma plataforma, fale conosco." },
   { q: "Onde fica hospedado?", a: "No seu próprio servidor VPS. Você tem controle total e privacidade dos seus dados. Ensinamos como configurar tudo." },
-  { q: "Quanto custa o servidor?", a: "A partir de R$25/mês em servidores confiáveis. Muito menos do que pagar múltiplas ferramentas de automação que custam R$300-500/mês." },
-  { q: "Consigo customizar as mensagens?", a: "Sim! Tudo é personalizável pelo painel web. Você define o tom, o conteúdo e quando cada automação é acionada." },
-  { q: "A IA realmente vende?", a: "Sim! O agente de IA é treinado para conhecer seus produtos, responder dúvidas, contornar objeções e fechar vendas. Tudo de forma natural e contextualizada." },
+  { q: "Quanto custa o servidor?", a: "A partir de R$27,99/mês em servidores confiáveis. Muito menos do que pagar múltiplas ferramentas de automação que custam R$300-500/mês." },
+  { q: "Consigo customizar as mensagens?", a: "Sim! Tudo é personalizável pelo painel web." },
   { q: "Qual a diferença entre API oficial e não-oficial?", a: "A API oficial tem mais estabilidade mas pode ter limitações. A não-oficial é mais flexível. Você recebe ambas e escolhe qual usar." },
 ];
 
 const Index = () => {
+  const [joinCount, setJoinCount] = useState(0);
+
+  const tomorrow = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d;
+  }, []);
+
+  const tomorrowFormatted = useMemo(() => {
+    return `${tomorrow.getDate().toString().padStart(2, '0')}/${(tomorrow.getMonth() + 1).toString().padStart(2, '0')}`;
+  }, [tomorrow]);
+
+  useEffect(() => {
+    const calculateJoinCount = () => {
+      const now = new Date();
+      const minutesToday = now.getHours() * 60 + now.getMinutes();
+
+      // Daily seed for stable but different randomness each day
+      const daySeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+      const pseudoRandom = (seed: number) => {
+        const x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+      };
+
+      const dailyOffset = Math.floor(pseudoRandom(daySeed) * 20) - 10; // -10 to +10
+
+      let baseCount = 0;
+      if (minutesToday < 480) { // 00h - 08h
+        baseCount = (minutesToday / 480) * 50;
+      } else if (minutesToday < 1200) { // 08h - 20h
+        baseCount = 50 + ((minutesToday - 480) / 720) * 50;
+      } else { // 20h - 24h
+        baseCount = 100 + ((minutesToday - 1200) / 240) * 50;
+      }
+
+      setJoinCount(Math.max(1, Math.floor(baseCount + dailyOffset)));
+    };
+
+    calculateJoinCount();
+    const interval = setInterval(calculateJoinCount, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
+      {/* Top Banner Offer */}
+      <div className="bg-background/80 border-b border-primary/20 py-2 px-4 sticky top-0 z-50 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+          {/* Left Side: Offer Text */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent/10 border border-accent/30 rounded-full">
+            <Zap className="w-3.5 h-3.5 text-accent" />
+            <span className="text-[10px] font-bold text-accent uppercase tracking-wider">Oferta • Preço Dobra em {tomorrowFormatted}</span>
+          </div>
+
+          {/* Right Side: Price + Button */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground line-through">R$97</span>
+              <span className="text-xl font-bold text-primary">R$47</span>
+            </div>
+            <CTAButton href="#pricing" variant="primary" size="sm" className="hidden sm:inline-flex h-8 px-6 text-xs font-bold uppercase tracking-widest">
+              Entrar Agora
+            </CTAButton>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Sticky Bottom CTA */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/80 backdrop-blur-md border-t border-primary/20 sm:hidden">
+        <CTAButton href="#pricing" variant="primary" size="lg" className="w-full text-sm font-bold uppercase tracking-widest shadow-glow">
+          Entrar Agora
+        </CTAButton>
+      </div>
+
       {/* Hero Section */}
-      <section className="relative pt-8 pb-20 px-4">
+      <section className="relative pt-16 pb-20 px-4">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-hero pointer-events-none" />
-        
+
         <div className="relative max-w-6xl mx-auto">
-          {/* Top offer badge */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center mb-8"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/30 rounded-full mb-4">
-              <Zap className="w-4 h-4 text-accent" />
-              <span className="text-sm font-medium text-accent">Oferta • Preço Dobra 14 de Janeiro</span>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <span className="text-2xl text-muted-foreground line-through">R$67</span>
-              <span className="text-5xl font-bold font-display text-gradient-primary">R$47</span>
-            </div>
-            
-            <CTAButton variant="primary" size="lg" className="mt-4">
-              Entrar
-            </CTAButton>
-          </motion.div>
 
           {/* Social proof bar */}
           <motion.div
@@ -110,10 +165,8 @@ const Index = () => {
             className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-10"
           >
             <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">
-              MAIS DE 500 INFOPRODUTORES RECUPERANDO VENDAS
+              Automação Inteligente para Infoprodutores
             </span>
-            <span className="hidden sm:inline">|</span>
-            <span className="hidden sm:inline">SISTEMA VALIDADO PARA 2026</span>
           </motion.div>
 
           {/* Main headline */}
@@ -127,14 +180,14 @@ const Index = () => {
               InFlow - Recuperação<br />
               <span className="text-gradient-primary">Automática de Vendas</span>
             </h1>
-            
+
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-display text-foreground/90 mb-6">
               Pare de Perder <span className="text-accent">40%</span> Das Suas Vendas<br />
               e Recupere Automaticamente Cada Real Deixado na Mesa
             </h2>
-            
+
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-              Carrinhos abandonados, pagamentos recusados e clientes sem resposta. Seu dinheiro está sangrando. Sem depender de mensalidades caras e sem precisar ser programador.
+              Carrinhos abandonados, faturas geradas, pagamentos recusados e clientes sem resposta. Seu dinheiro está sangrando. Sem depender de mensalidades caras e sem precisar ser programador.
             </p>
 
             {/* Avatars + stats */}
@@ -172,12 +225,11 @@ const Index = () => {
               </p>
               <div className="flex items-center justify-center gap-3">
                 <CheckCircle className="w-5 h-5 text-primary" />
-                <span className="text-sm text-muted-foreground">Verificado</span>
                 <span className="font-semibold text-foreground">João Silva</span>
               </div>
             </motion.div>
 
-            <CTAButton variant="primary" size="xl">
+            <CTAButton href="#pricing" variant="primary" size="xl">
               Quero Começar Agora
             </CTAButton>
           </motion.div>
@@ -194,7 +246,7 @@ const Index = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl sm:text-4xl font-bold font-display text-foreground mb-4">
-              O Que Estão Dizendo Sobre o Sistema?
+              O Que Estão Dizendo Sobre o InFlow?
             </h2>
           </motion.div>
 
@@ -205,10 +257,11 @@ const Index = () => {
           </div>
 
           <div className="text-center mt-12">
-            <p className="text-lg text-primary font-medium mb-6">
-              🎯 Do carrinho abandonado até o cliente recuperado - sistema completíssimo
-            </p>
-            <CTAButton variant="primary" size="lg">
+            <div className="flex items-center justify-center gap-2 text-primary font-medium mb-6">
+              <Target className="w-5 h-5" />
+              <span>Do carrinho abandonado até o cliente recuperado, sistema completo!</span>
+            </div>
+            <CTAButton href="#pricing" variant="primary" size="lg">
               Quero Recuperar Minhas Vendas
             </CTAButton>
           </div>
@@ -228,11 +281,11 @@ const Index = () => {
               Automações Reais Que Recuperam Dinheiro
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Do zero ao seu primeiro sistema de recuperação — sem pagar mensalidades absurdas e sem dor de cabeça técnica.
+              Do zero ao seu primeiro sistema de recuperação, sem pagar mensalidades absurdas e sem dor de cabeça técnica.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 justify-center">
             {features.map((feature, i) => (
               <FeatureCard key={i} {...feature} />
             ))}
@@ -246,11 +299,13 @@ const Index = () => {
             className="mt-16"
           >
             <h3 className="text-2xl font-bold font-display text-foreground text-center mb-8">
-              MÓDULOS BÔNUS
+              BÔNUS INCLUSOS
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto">
               {bonusFeatures.map((feature, i) => (
-                <FeatureCard key={i} {...feature} badge="BÔNUS" badgeVariant="bonus" />
+                <div key={i} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1rem)]">
+                  <FeatureCard {...feature} badge="BÔNUS" badgeVariant="bonus" />
+                </div>
               ))}
             </div>
           </motion.div>
@@ -287,7 +342,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* About Creator Section */}
+      {/* About Creator Section 
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -297,8 +352,8 @@ const Index = () => {
             className="bg-gradient-card border border-border rounded-2xl p-8 md:p-12 shadow-card"
           >
             <div className="flex flex-col md:flex-row items-center gap-8">
-              <div className="w-32 h-32 rounded-full bg-gradient-primary flex items-center justify-center text-5xl font-bold text-primary-foreground flex-shrink-0">
-                🚀
+              <div className="w-32 h-32 rounded-full bg-gradient-primary flex items-center justify-center text-primary-foreground flex-shrink-0">
+                <Rocket className="w-16 h-16" />
               </div>
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold font-display text-foreground mb-4">
@@ -317,7 +372,7 @@ const Index = () => {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section>*/}
 
       {/* Value Stack Section */}
       <section className="py-20 px-4 bg-gradient-dark">
@@ -328,7 +383,7 @@ const Index = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <span className="text-sm font-medium text-muted-foreground">(Economia de R$ 1.200+)</span>
+            <span className="text-sm font-medium text-muted-foreground">(Economia de +R$ 1.600)</span>
             <h2 className="text-3xl sm:text-4xl font-bold font-display text-foreground mt-2">
               O Que Você Leva Hoje
             </h2>
@@ -338,11 +393,11 @@ const Index = () => {
             {pricingItems.map((item, i) => (
               <PricingItem key={i} {...item} index={i} />
             ))}
-            
-            <div className="mt-6 pt-6 border-t border-border text-center">
+
+            <div className="mt-6 pt-6 border-border text-center">
               <p className="text-muted-foreground mb-2">Valor Total Real:</p>
               <p className="text-3xl font-bold font-display text-foreground line-through decoration-destructive">
-                R$ 1.382
+                R$ 1.682
               </p>
               <p className="text-lg text-muted-foreground mt-4">
                 Mas hoje, nessa oferta de lançamento, você NÃO vai pagar isso.
@@ -350,11 +405,11 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="text-center">
+          {/*<div className="text-center">
             <CTAButton variant="secondary" size="lg">
               VER VALOR PROMOCIONAL
             </CTAButton>
-          </div>
+          </div>*/}
         </div>
       </section>
 
@@ -393,15 +448,15 @@ const Index = () => {
               <div className="text-center mb-6">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <h3 className="text-xl font-bold font-display text-foreground">InFlow Completo</h3>
-                  <Star className="w-5 h-5 fill-accent text-accent" />
-                  <span className="text-xs font-medium text-accent">MAIS VENDIDO</span>
+                  {/*<Star className="w-5 h-5 fill-accent text-accent" />
+                  <span className="text-xs font-medium text-accent">MAIS VENDIDO</span>*/}
                 </div>
-                
+
                 <div className="flex items-center justify-center gap-3">
-                  <span className="text-2xl text-muted-foreground line-through">R$ 67</span>
+                  <span className="text-2xl text-muted-foreground line-through">R$ 97</span>
                   <span className="text-5xl font-bold font-display text-gradient-primary">R$47</span>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">ou 12x de R$ 4,87</p>
+                <p className="text-sm text-muted-foreground mt-2">ou 9x de R$ 3,62</p>
               </div>
 
               <div className="space-y-3 mb-6">
@@ -413,7 +468,7 @@ const Index = () => {
                   "Centralização de plataformas",
                   "Vídeo aulas passo a passo",
                   "Análise de dados e métricas",
-                  "Suporte prioritário",
+                  "Suporte via Grupo no Whatsapp",
                   "Acesso Vitalício + Atualizações",
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
@@ -423,10 +478,10 @@ const Index = () => {
                 ))}
               </div>
 
-              <div className="text-center mb-6">
+              {/*<div className="text-center mb-6">
                 <p className="text-sm text-muted-foreground mb-3">O desconto encerra em:</p>
                 <CountdownTimer />
-              </div>
+              </div>*/}
 
               <CTAButton variant="primary" size="xl" className="w-full mb-4">
                 GARANTIR MINHA VAGA
@@ -447,13 +502,19 @@ const Index = () => {
                 </div>
               </div>
 
-              <p className="text-center text-sm text-primary font-medium">
-                127 pessoas entraram hoje.
-              </p>
-              
+              <div className="flex flex-col items-center gap-2 mb-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent/10 border border-accent/30 rounded-full">
+                  <Zap className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-[10px] font-bold text-accent uppercase tracking-wider">Oferta • Preço Dobra em {tomorrowFormatted}</span>
+                </div>
+                <p className="text-center text-sm text-primary font-medium">
+                  {joinCount} pessoas entraram hoje.
+                </p>
+              </div>
+
               <div className="flex items-center justify-center gap-2 mt-4 text-xs text-muted-foreground">
                 <CreditCard className="w-4 h-4" />
-                <span>💳 Pagamento 100% Seguro via Kiwify</span>
+                <span>Pagamento 100% Seguro via Lastlink</span>
               </div>
             </div>
           </motion.div>
@@ -496,10 +557,10 @@ const Index = () => {
                 {[
                   'Busca "dinheiro fácil" sem implementar nada.',
                   "Acha que automação funciona sem configurar.",
-                  "Quer tudo de graça sem investir em servidor básico (R$25/mês).",
+                  "Quer tudo de graça sem investir em servidor básico (R$28/mês).",
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <span className="text-destructive font-bold">✕</span>
+                    <X className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
                     <span className="text-sm text-muted-foreground">{item}</span>
                   </li>
                 ))}
@@ -520,12 +581,12 @@ const Index = () => {
           >
             <Shield className="w-16 h-16 text-primary mx-auto mb-6" />
             <h2 className="text-2xl sm:text-3xl font-bold font-display text-foreground mb-4">
-              Garantia Blindada de 7 Dias
+              Garantia Blindada de 15 Dias
             </h2>
-            <p className="text-lg text-muted-foreground mb-6">
-              🛡️ Teste o InFlow por 7 dias. Se não recuperar pelo menos o valor investido em vendas perdidas, devolvemos <span className="text-primary font-semibold">100% do seu dinheiro</span>. Simples assim.
+            <p className="text-lg text-muted-foreground mb-6 flex items-start sm:items-center justify-center gap-2">
+              <span>Teste o InFlow por 15 dias. Se não gostar do sistema, devolvemos 100% do seu dinheiro.</span>
             </p>
-            
+
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6 border-t border-border">
               <div className="text-center">
                 <Clock className="w-8 h-8 text-accent mx-auto mb-2" />
@@ -570,7 +631,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Final CTA Section */}
+      {/* Final CTA Section 
       <section className="py-20 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div
@@ -588,17 +649,20 @@ const Index = () => {
             <p className="text-xl text-foreground font-semibold mb-8">
               O InFlow resolve isso hoje. <span className="text-primary">Pagamento único. Seu para sempre.</span>
             </p>
-            <CTAButton variant="primary" size="xl">
+            <CTAButton href="#pricing" variant="primary" size="xl">
               QUERO RECUPERAR MINHAS VENDAS
             </CTAButton>
           </motion.div>
         </div>
-      </section>
+      </section>*/}
+
+      {/* WhatsApp Floating Button */}
+      <WhatsAppButton />
 
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-border">
         <div className="max-w-6xl mx-auto text-center text-sm text-muted-foreground">
-          <p>© 2026 InFlow. Todos os direitos reservados.</p>
+          <p>© 2026 InFlow – Automação Inteligente para Infoprodutores. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

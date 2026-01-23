@@ -9,6 +9,7 @@ import { CTAButton } from '@/components/CTAButton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useState, useEffect, useMemo } from 'react';
 import { WhatsAppButton } from '@/components/WhatsAppButton';
+import dashboardPreview from '@/assets/dashboard-preview.png';
 const testimonials = [{
   content: "Recuperei R$ 8.450 em vendas perdidas no primeiro mês. O InFlow pagou por si mesmo em 3 dias.",
   author: "João Silva",
@@ -340,6 +341,61 @@ const Index = () => {
               {bonusFeatures.map((feature, i) => <div key={i} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1rem)]">
                   <FeatureCard {...feature} badge="BÔNUS" badgeVariant="bonus" />
                 </div>)}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Dashboard Preview Section */}
+      <section className="py-20 px-4 bg-gradient-dark">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold font-display text-foreground mb-4">
+              Painel Web de Controle Completo
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Visualize todas as métricas do seu negócio em tempo real. Faturamento, vendas, ticket médio e performance diária em um único lugar.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="relative"
+          >
+            {/* Glow effect behind image */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 blur-3xl -z-10 scale-95" />
+            
+            {/* Dashboard image with border and shadow */}
+            <div className="rounded-2xl overflow-hidden border border-primary/30 shadow-2xl shadow-primary/10">
+              <img
+                src={dashboardPreview}
+                alt="Painel de controle InFlow mostrando métricas de vendas, performance diária e top produtos"
+                className="w-full h-auto"
+              />
+            </div>
+
+            {/* Feature badges */}
+            <div className="flex flex-wrap justify-center gap-3 mt-8">
+              <div className="flex items-center gap-2 px-4 py-2 bg-card/50 backdrop-blur-sm border border-border rounded-full">
+                <BarChart3 className="w-4 h-4 text-primary" />
+                <span className="text-sm text-foreground">Métricas em Tempo Real</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-card/50 backdrop-blur-sm border border-border rounded-full">
+                <Target className="w-4 h-4 text-accent" />
+                <span className="text-sm text-foreground">Performance Diária</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-card/50 backdrop-blur-sm border border-border rounded-full">
+                <DollarSign className="w-4 h-4 text-primary" />
+                <span className="text-sm text-foreground">Ranking de Produtos</span>
+              </div>
             </div>
           </motion.div>
         </div>

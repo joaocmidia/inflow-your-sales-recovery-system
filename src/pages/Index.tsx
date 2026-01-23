@@ -259,9 +259,9 @@ const Index = () => {
         }} transition={{
           delay: 0.3
         }} className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display text-foreground mb-4 leading-tight">As Únicas Automações
-Automática de Vendas<br />
-              <span className="text-gradient-primary">Automática de Vendas</span>
+            <h1 className="text-4xl sm:text-5xl font-bold font-display text-foreground mb-4 leading-tight lg:text-5xl">Turbine as vendas e a experiência do seu cliente com as Automações InFlow
+            <br />
+              
             </h1>
 
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-display text-foreground/90 mb-6">
@@ -282,7 +282,7 @@ Automática de Vendas<br />
               </div>
               <div className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-primary" />
-                <span className="text-foreground font-medium">500+ infoprodutores</span>
+                <span className="text-foreground font-medium">234+ infoprodutores</span>
                 <div className="flex gap-0.5">
                   {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-accent text-accent" />)}
                 </div>

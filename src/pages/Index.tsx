@@ -246,9 +246,7 @@ const Index = () => {
         }} transition={{
           delay: 0.2
         }} className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-10">
-            <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">
-              Automação Inteligente para Infoprodutores
-            </span>
+            <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">Automações Inteligentes para Infoprodutores</span>
           </motion.div>
 
           {/* Main headline */}
@@ -261,8 +259,8 @@ const Index = () => {
         }} transition={{
           delay: 0.3
         }} className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display text-foreground mb-4 leading-tight">
-              InFlow - Recuperação<br />
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display text-foreground mb-4 leading-tight">As Únicas Automações
+Automática de Vendas<br />
               <span className="text-gradient-primary">Automática de Vendas</span>
             </h1>
 

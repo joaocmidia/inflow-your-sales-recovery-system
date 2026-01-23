@@ -299,39 +299,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-20 px-4 bg-gradient-dark">
-        <div className="max-w-6xl mx-auto">
-          <motion.div initial={{
-          opacity: 0,
-          y: 20
-        }} whileInView={{
-          opacity: 1,
-          y: 0
-        }} viewport={{
-          once: true
-        }} className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold font-display text-foreground mb-4">
-              O Que Estão Dizendo Sobre o InFlow?
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {testimonials.slice(0, 9).map((testimonial, i) => <TestimonialCard key={i} {...testimonial} />)}
-          </div>
-
-          <div className="text-center mt-12">
-            <div className="flex items-center justify-center gap-2 text-primary font-medium mb-6">
-              <Target className="w-5 h-5" />
-              <span>Do carrinho abandonado até o cliente recuperado, sistema completo!</span>
-            </div>
-            <CTAButton href="#pricing" variant="primary" size="lg">
-              Quero Recuperar Minhas Vendas
-            </CTAButton>
-          </div>
-        </div>
-      </section>
-
       {/* Features Section */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
@@ -375,6 +342,39 @@ const Index = () => {
                 </div>)}
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 px-4 bg-gradient-dark">
+        <div className="max-w-6xl mx-auto">
+          <motion.div initial={{
+          opacity: 0,
+          y: 20
+        }} whileInView={{
+          opacity: 1,
+          y: 0
+        }} viewport={{
+          once: true
+        }} className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold font-display text-foreground mb-4">
+              O Que Estão Dizendo Sobre o InFlow?
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {testimonials.slice(0, 9).map((testimonial, i) => <TestimonialCard key={i} {...testimonial} />)}
+          </div>
+
+          <div className="text-center mt-12">
+            <div className="flex items-center justify-center gap-2 text-primary font-medium mb-6">
+              <Target className="w-5 h-5" />
+              <span>Do carrinho abandonado até o cliente recuperado, sistema completo!</span>
+            </div>
+            <CTAButton href="#pricing" variant="primary" size="lg">
+              Quero Recuperar Minhas Vendas
+            </CTAButton>
+          </div>
         </div>
       </section>
 
